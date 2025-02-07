@@ -5,15 +5,15 @@ This project is a wrapper application built on top of Okto using the @okto_web3/
 
 ## Tech Stack
 
-* # Frontend (FR): React.js, TypeScript
+* Frontend (FR): React.js, TypeScript
 
-* # Backend (BE): Node.js, Express
+* Backend (BE): Node.js, Express
 
-* # Blockchain SDK: @okto_web3/core-js-sdk
+* Blockchain SDK: @okto_web3/core-js-sdk
 
 ## Installation & Setup
 
-# Prerequisites
+### Prerequisites
 
 Ensure you have the following installed:
 
@@ -45,7 +45,7 @@ PORT=3000
 
 ## Running the Application
 
-# Start Backend
+### Start Backend
 
 Copy and run the following command:
 
@@ -54,7 +54,7 @@ cd backend
 npm run dev
 ```
 
-# Start Frontend
+### Start Frontend
 
 Copy and run the following command:
 
