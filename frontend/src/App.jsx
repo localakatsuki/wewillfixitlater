@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './Components/Login';
 import Home from './Components/Home/index'; 
 function App(){
@@ -13,7 +13,7 @@ function App(){
           <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
           <Route
             path="/home"
-            element={isAuthenticated ? <Home /> : <Login setIsAuthenticated={setIsAuthenticated} />}
+            element={isAuthenticated ? <Home setIsAuthenticated={setIsAuthenticated}/> : <Login setIsAuthenticated={setIsAuthenticated} />}
           />
         </Routes>
       </div>
