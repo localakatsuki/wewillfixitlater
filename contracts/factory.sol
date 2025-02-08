@@ -6,20 +6,13 @@ import "./fundraisingCampaign.sol";
 contract FundraisingCampaignFactory {
     // Mapping to store campaigns by their contract address
     mapping(address => FundraisingCampaign) private campaignsByAddress;
+    address[] public campaigns;
 
     // Mapping to store the campaign owner by contract address
     mapping(address => address[]) public userCampaigns;
 
     // Event to emit when a new fundraising campaign is created
-    event CampaignCreated(address campaignAddress, address owner, string name, uint goalAmount, uint duration, address usdcToken);
-
-    // USDC token contract address
-    address private tokenAddress;
-
-    // Constructor to initialize the factory with the USDC token address
-    constructor(address _tokenAddress) {
-        tokenAddress = _tokenAddress;
-    }
+    event CampaignCreated(address campaignAddress, address owner, string name, uint goalAmount, uint duration, address usdcToken); 
 
     // Function to deploy a new fundraising campaign
     function createCampaign(
@@ -27,7 +20,8 @@ contract FundraisingCampaignFactory {
         uint _goalAmount,
         uint _durationInDays,
         string memory _description,
-        string memory _image
+        string memory _image,
+        address tokenAddress
     ) external {
         // Create a new instance of the FundraisingCampaign contract
         FundraisingCampaign newCampaign = new FundraisingCampaign(
@@ -45,35 +39,60 @@ contract FundraisingCampaignFactory {
         
         // Store the owner of the campaign
         userCampaigns[msg.sender].push(address(newCampaign));
+        campaigns.push(address(newCampaign));
 
         // Emit the CampaignCreated event
         emit CampaignCreated(address(newCampaign), msg.sender, _name, _goalAmount, _durationInDays, tokenAddress);
     }
 
+    function getActiveCampaigns() external view returns (address[] memory) {
+        if (campaigns.length == 0) {
+            return new address[](0);
+        }
+
+        // First, count active campaigns
+        uint activeCount = 0;
+        for (uint i = 0; i < campaigns.length; i++) {
+            FundraisingCampaign campaign = campaignsByAddress[campaigns[i]];
+            if (campaign.getCampaignDetails().active) {
+                activeCount++;
+            }
+        }
+
+        // Create array with exact size needed
+        address[] memory activeCampaigns = new address[](activeCount);
+        uint currentIndex = 0;
+        
+        // Fill array using index counter
+        for (uint i = 0; i < campaigns.length; i++) {
+            FundraisingCampaign campaign = campaignsByAddress[campaigns[i]];
+            if (campaign.getCampaignDetails().active) {
+                activeCampaigns[currentIndex] = campaigns[i];
+                currentIndex++;
+            }
+        }
+        return activeCampaigns;
+    }
+
     // Function to get a campaign by its address
     function getCampainDetailsByAddress(address[] memory campaignAddresses) external view returns (CampaignDetails[] memory) {
         // Initialize an array to store the details of all campaigns
-        CampaignDetails[] memory campaigns = new CampaignDetails[](campaignAddresses.length);
+        CampaignDetails[] memory campaignDetails = new CampaignDetails[](campaignAddresses.length);
 
         // Loop through all campaign addresses and populate the details
         for (uint i = 0; i < campaignAddresses.length; i++) {
             FundraisingCampaign campaign = campaignsByAddress[campaignAddresses[i]];
 
             // Populate the struct with details of each campaign
-            campaigns[i] = campaign.getCampaignDetails();
+            campaignDetails[i] = campaign.getCampaignDetails();
         }
 
         // Return the array of campaign details
-        return campaigns;
+        return campaignDetails;
     }
 
     function getCampaignsByUser(address userAddress) external view returns (address[] memory) {
         return userCampaigns[userAddress];
-    }
-
-    // Function to get the USDC token address
-    function getTokenAddress() external view returns (address) {
-        return tokenAddress;
     }
 }
 

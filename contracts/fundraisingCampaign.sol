@@ -21,6 +21,7 @@ struct CampaignDetails {
     address creator;
     bool active;
     bool redeemed;
+    address tokenAddress;
 }
 
 contract FundraisingCampaign {
@@ -34,7 +35,7 @@ contract FundraisingCampaign {
     bool public active;
     bool public redeemed;
 
-    IERC20 public usdcToken;  // USDC token contract
+    IERC20 public contributionToken;  // USDC token contract
 
     mapping(address => uint) public contributors;
 
@@ -59,7 +60,7 @@ contract FundraisingCampaign {
     event FundsRedeemed(address owner, uint amount);
 
     // Constructor to initialize the fundraising campaign
-    constructor(address _owner, string memory _name, uint _goalAmount, uint _durationInDays, string memory _description, string memory _image, address _usdcToken) {
+    constructor(address _owner, string memory _name, uint _goalAmount, uint _durationInDays, string memory _description, string memory _image, address _contributionToken) {
         owner = _owner;
         name = _name;
         goalAmount = _goalAmount;
@@ -69,15 +70,18 @@ contract FundraisingCampaign {
         image = _image;
         redeemed = false;
         active = true;
-        usdcToken = IERC20(_usdcToken);  // USDC token contract address
+        contributionToken = IERC20(_contributionToken);  // USDC token contract address
     }
 
     // Deposit method to allow contributions to the campaign
-    function contribute(uint _amount) external payable isActive {
+    function contribute(uint _amount) external isActive {
         require(_amount > 0, "Contribution must be greater than 0.");
 
+        uint allowance = contributionToken.allowance(msg.sender, address(this));
+        require(allowance >= _amount, "Allowance is not sufficient.");
+
         // Transfer USDC from the contributor to the campaign
-        bool success = usdcToken.transferFrom(msg.sender, address(this), _amount);
+        bool success = contributionToken.transferFrom(msg.sender, address(this), _amount);
         require(success, "Transfer of USDC failed.");
 
         // Track the contribution from the sender
@@ -92,7 +96,6 @@ contract FundraisingCampaign {
     function redeemFunds() external onlyOwner {
         require(!redeemed, "The fund is redeemed");
         require(currentAmount >= goalAmount, "The fundraising goal has not been reached yet.");
-        require(block.timestamp >= deadline, "The campaign is still ongoing.");
 
         uint amountToTransfer = currentAmount;
         currentAmount = 0; // Reset currentAmount to prevent re-entrancy issues
@@ -100,7 +103,7 @@ contract FundraisingCampaign {
         redeemed = true;
 
        // Transfer the USDC funds to the owner
-        bool success = usdcToken.transfer(owner, amountToTransfer);
+        bool success = contributionToken.transfer(owner, amountToTransfer);
         require(success, "Transfer of USDC to owner failed.");
 
         // Emit the FundsRedeemed event
@@ -126,6 +129,6 @@ contract FundraisingCampaign {
     }
 
     function getCampaignDetails() external view returns (CampaignDetails memory) { 
-        return CampaignDetails(name, goalAmount, currentAmount, deadline, description, image, owner, active, redeemed);
+        return CampaignDetails(name, goalAmount, currentAmount, deadline, description, image, owner, active, redeemed, address(contributionToken));
     }
 }
