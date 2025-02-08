@@ -3,14 +3,12 @@ import { useOkto } from '@okto_web3/react-sdk';
 import { getAccount } from '@okto_web3/react-sdk';
 import { ethers } from 'ethers';
 import '../OnGoingCampaigns/CampaignCard.css';
-import { factoryAbi } from '../../constant';
+import { factoryAbi,contractAddress } from '../../constant';
 
 const UserCampaignCard = () => {
     const oktoClient = useOkto();
     const [userCampaigns, setUserCampaigns] = useState([]);
-
-    // Contract details
-    const contractAddress = "0x5419ebfd86d6ea377b8a9af69490d51ac4bd939c"; // Your contract address
+    
 
     useEffect(() => {
         // Fetch campaigns from blockchain on component mount

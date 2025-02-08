@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import './CampaignCard.css';
-import { factoryAbi } from '../../constant';
+import { contractAddress, factoryAbi } from '../../constant';
 
 const CampaignCard = () => {
     const [campaigns, setCampaigns] = useState([]);
-
-    // Contract details
-    const contractAddress = "0x5419ebfd86d6ea377b8a9af69490d51ac4bd939c"; // Your contract address
 
     useEffect(() => {
         // Fetch campaigns from blockchain on component mount
@@ -25,6 +22,8 @@ const CampaignCard = () => {
 
                 // Map the data into a suitable format for the frontend
                 const campaignDetails = campaignsData.map(campaign => {
+                    console.log(campaign);
+                    
                     const campaignDeetsArray = Array.from(campaign);
                     return {
                         campaignName: campaignDeetsArray[0],

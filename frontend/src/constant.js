@@ -227,3 +227,5 @@ export const factoryAbi = [
         "type": "function"
     }
 ]
+
+export const contractAddress = "0xb5A873504b97028527f3D41Ef6524171FDcAf94D"
