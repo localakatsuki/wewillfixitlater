@@ -5,6 +5,8 @@ import { OktoProvider } from '@okto_web3/react-sdk';
 import App from './App';
 import ErrorBoundary from './Components/ErrorBoundary';
 import { Buffer } from "buffer";
+import { store } from './store';
+import { Provider } from 'react-redux';
 
 // Ensure Buffer is available globally
 window.Buffer = Buffer;
@@ -19,11 +21,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId='1011167612869-f5opftjtjo4l3njiaf87rorfu2c6eqfj.apps.googleusercontent.com'>
       <ErrorBoundary>
-      <OktoProvider config={config}>
-        <App />
-      </OktoProvider>
+        <Provider store={store}>
+          <OktoProvider config={config}>
+            <App />
+          </OktoProvider>
+        </Provider>
       </ErrorBoundary>
     </GoogleOAuthProvider>
   </React.StrictMode>

@@ -1,33 +1,67 @@
-/* src/components/Home.css */
+/* General container styling */
 .home-container {
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
-  background-color: #eaeaea;
 }
 
-.home-container h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+/* Navigation Bar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #66b3ff;
+  color: white;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.home-container p {
+.nav-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   font-size: 1.2rem;
+  transition: background-color 0.3s;
 }
 
-button {
-  background-color: #007bff;
+.nav-item:hover {
+  background-color: #0056b3;
+}
+
+.nav-item.active {
+  background-color: #0056b3;
+  font-weight: bold;
+}
+
+.nav-item svg {
+  margin-right: 10px;
+}
+
+/* Logout button */
+.logout-button {
+  background-color: #dc3545;
   color: white;
   border: none;
   padding: 10px 20px;
-  font-size: 1rem;
   cursor: pointer;
+  font-size: 1rem;
   border-radius: 5px;
-  margin-top: 20px;
 }
 
-button:hover {
-  background-color: #0056b3;
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+/* Content Area */
+.content {
+  padding: 20px;
+  flex-grow: 1;
+  background-color: #f8f9fa;
+}
+
+.content div {
+  font-size: 1.5rem;
 }

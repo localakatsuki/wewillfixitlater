@@ -52,8 +52,11 @@ const Login = ({ setIsAuthenticated }) => {
 
   return (
     <div className="login-container">
-      <h1>Welcome to the Web3 Platform</h1>
+      <div class="login-box">
+      <h2>Marvel Jesus</h2>
       <GoogleLogin onSuccess={handleGoogleLogin} onError={(err) => console.log('Login Failed:', err)} />
+      </div>
+      
     </div>
   );
 };
