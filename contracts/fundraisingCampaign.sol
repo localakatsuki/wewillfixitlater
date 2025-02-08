@@ -11,13 +11,17 @@ interface IERC20 {
 }
 
 // Struct to hold campaign details
-    struct CampaignDetails {
-        string name;
-        uint currentAmount;
-        uint goalAmount;
-        uint deadline;
-        address creator;
-    }
+struct CampaignDetails {
+    string name;
+    uint currentAmount;
+    uint goalAmount;
+    uint deadline;
+    string description;
+    string image;
+    address creator;
+    bool active;
+    bool redeemed;
+}
 
 contract FundraisingCampaign {
     address public owner;
@@ -25,6 +29,8 @@ contract FundraisingCampaign {
     uint public goalAmount;
     uint public currentAmount;
     uint public deadline;
+    string description;
+    string image;
     bool public active;
     bool public redeemed;
 
@@ -53,12 +59,14 @@ contract FundraisingCampaign {
     event FundsRedeemed(address owner, uint amount);
 
     // Constructor to initialize the fundraising campaign
-    constructor(address _owner, string memory _name, uint _goalAmount, uint _durationInDays, address _usdcToken) {
+    constructor(address _owner, string memory _name, uint _goalAmount, uint _durationInDays, string memory _description, string memory _image, address _usdcToken) {
         owner = _owner;
         name = _name;
         goalAmount = _goalAmount;
         currentAmount = 0;
         deadline = block.timestamp + _durationInDays * 1 days;
+        description = _description;
+        image = _image;
         redeemed = false;
         active = true;
         usdcToken = IERC20(_usdcToken);  // USDC token contract address
@@ -118,6 +126,6 @@ contract FundraisingCampaign {
     }
 
     function getCampaignDetails() external view returns (CampaignDetails memory) { 
-        return CampaignDetails(name, goalAmount, currentAmount, deadline, owner);
+        return CampaignDetails(name, goalAmount, currentAmount, deadline, description, image, owner, active, redeemed);
     }
 }

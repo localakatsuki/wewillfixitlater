@@ -1,123 +1,109 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IERC20 {
-   function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-}
+import "./fundraisingCampaign.sol";
 
-// Struct to hold campaign details
-    struct CampaignDetails {
-        string name;
-        uint currentAmount;
-        uint goalAmount;
-        uint deadline;
-        address creator;
+contract FundraisingCampaignFactory {
+    // Mapping to store campaigns by their contract address
+    mapping(address => FundraisingCampaign) private campaignsByAddress;
+
+    // Mapping to store the campaign owner by contract address
+    mapping(address => address[]) public userCampaigns;
+
+    // Event to emit when a new fundraising campaign is created
+    event CampaignCreated(address campaignAddress, address owner, string name, uint goalAmount, uint duration, address usdcToken);
+
+    // USDC token contract address
+    address private tokenAddress;
+
+    // Constructor to initialize the factory with the USDC token address
+    constructor(address _tokenAddress) {
+        tokenAddress = _tokenAddress;
     }
 
-contract FundraisingCampaign {
-    address public owner;
-    string public name;
-    uint public goalAmount;
-    uint public currentAmount;
-    uint public deadline;
-    bool public active;
-    bool public redeemed;
+    // Function to deploy a new fundraising campaign
+    function createCampaign(
+        string memory _name,
+        uint _goalAmount,
+        uint _durationInDays,
+        string memory _description,
+        string memory _image
+    ) external {
+        // Create a new instance of the FundraisingCampaign contract
+        FundraisingCampaign newCampaign = new FundraisingCampaign(
+            msg.sender,          // The owner of the campaign (the sender of the transaction)
+            _name,               // Campaign name
+            _goalAmount,        // Fundraising goal amount (in USDC, 6 decimals)
+            _durationInDays,    // Duration in days
+            _description,       // Campaign description
+            _image,             // Campaign image
+            tokenAddress    // USDC token contract address
+        );
 
-    IERC20 public usdcToken;  // USDC token contract
+        // Store the deployed campaign in the mapping using the contract address as the key
+        campaignsByAddress[address(newCampaign)] = newCampaign;
+        
+        // Store the owner of the campaign
+        userCampaigns[msg.sender].push(address(newCampaign));
 
-    mapping(address => uint) public contributors;
-
-    // Modifier to allow only the owner to access certain functions
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can perform this action.");
-        active = false;
-        _;
+        // Emit the CampaignCreated event
+        emit CampaignCreated(address(newCampaign), msg.sender, _name, _goalAmount, _durationInDays, tokenAddress);
     }
 
-    // Modifier to check if the campaign is active (i.e., not completed or expired)
-    modifier isActive() {
-        require(block.timestamp < deadline, "The campaign has expired.");
-        require(currentAmount < goalAmount, "The goal has already been reached.");
-        _;
-    }
+    // Function to get a campaign by its address
+    function getCampainDetailsByAddress(address[] memory campaignAddresses) external view returns (CampaignDetails[] memory) {
+        // Initialize an array to store the details of all campaigns
+        CampaignDetails[] memory campaigns = new CampaignDetails[](campaignAddresses.length);
 
-    // Event to emit when a contribution is made
-    event ContributionReceived(address contributor, uint amount, uint totalAmount);
+        // Loop through all campaign addresses and populate the details
+        for (uint i = 0; i < campaignAddresses.length; i++) {
+            FundraisingCampaign campaign = campaignsByAddress[campaignAddresses[i]];
 
-    // Event to emit when the funds are redeemed by the owner
-    event FundsRedeemed(address owner, uint amount);
-
-    // Constructor to initialize the fundraising campaign
-    constructor(address _owner, string memory _name, uint _goalAmount, uint _durationInDays, address _usdcToken) {
-        owner = _owner;
-        name = _name;
-        goalAmount = _goalAmount;
-        currentAmount = 0;
-        deadline = block.timestamp + _durationInDays * 1 days;
-        redeemed = false;
-        active = true;
-        usdcToken = IERC20(_usdcToken);  // USDC token contract address
-    }
-
-    // Deposit method to allow contributions to the campaign
-    function contribute(uint _amount) external payable isActive {
-        require(_amount > 0, "Contribution must be greater than 0.");
-
-        // Transfer USDC from the contributor to the campaign
-        bool success = usdcToken.transferFrom(msg.sender, address(this), _amount);
-        require(success, "Transfer of USDC failed.");
-
-        // Track the contribution from the sender
-        contributors[msg.sender] += _amount;
-        currentAmount += _amount;
-
-        // Emit the ContributionReceived event
-        emit ContributionReceived(msg.sender, _amount, currentAmount);
-    }
-
-    // Function for the owner to redeem the funds once the goal is met
-    function redeemFunds() external onlyOwner {
-        require(!redeemed, "The fund is redeemed");
-        require(currentAmount >= goalAmount, "The fundraising goal has not been reached yet.");
-        require(block.timestamp >= deadline, "The campaign is still ongoing.");
-
-        uint amountToTransfer = currentAmount;
-        currentAmount = 0; // Reset currentAmount to prevent re-entrancy issues
-        active = false;
-        redeemed = true;
-
-       // Transfer the USDC funds to the owner
-        bool success = usdcToken.transfer(owner, amountToTransfer);
-        require(success, "Transfer of USDC to owner failed.");
-
-        // Emit the FundsRedeemed event
-        emit FundsRedeemed(owner, amountToTransfer);
-    }
-
-    // Function to check the current campaign status
-    function getCampaignStatus() external view returns (string memory status) {
-        if (currentAmount >= goalAmount) {
-            status = "Goal Reached";
-        } else if (block.timestamp >= deadline) {
-            status = "Campaign Ended";
-        } else {
-            status = "Active";
+            // Populate the struct with details of each campaign
+            campaigns[i] = campaign.getCampaignDetails();
         }
 
-        return status;
+        // Return the array of campaign details
+        return campaigns;
     }
 
-    // Function to check the current contribution of a user
-    function getContributorContribution(address _contributor) external view returns (uint) {
-        return contributors[_contributor];
+    function getCampaignsByUser(address userAddress) external view returns (address[] memory) {
+        return userCampaigns[userAddress];
     }
 
-    function getCampaignDetails() external view returns (CampaignDetails memory) { 
-        return CampaignDetails(name, goalAmount, currentAmount, deadline, owner);
+    // Function to get the USDC token address
+    function getTokenAddress() external view returns (address) {
+        return tokenAddress;
     }
 }
+
+// 0x3020580b000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000002540be4000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000e50726979616e6b27732062696b65000000000000000000000000000000000000
+// import { ethers } from "ethers";
+// import { encodeAbiParameters } from "viem";
+
+// async function generateCallData() {
+//   // Define the function selector
+//   const functionSelector = "0x3020580b"; // Given function selector
+
+//   // Parameters for the createCampaign function
+//   const campaignName = "Priyank's bike";
+//   const goalAmount = 10000000000;  // 10 billion tokens
+//   const campaignDuration = 1;      // 1 second
+
+//   // ABI encode the parameters
+//   const encodedData = encodeAbiParameters(
+//     [
+//       { type: 'string' },
+//       { type: 'uint256' },
+//       { type: 'uint256' }
+//     ],
+//     [campaignName, goalAmount, campaignDuration]
+//   );
+
+//   // Combine the function selector with the encoded parameters
+//   const callData = functionSelector + encodedData.slice(2);  // Remove the leading '0x' from encoded data
+
+//   console.log("Call Data:", callData);
+// }
+
+// generateCallData();
