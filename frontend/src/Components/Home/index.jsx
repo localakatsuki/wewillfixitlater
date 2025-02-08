@@ -1,31 +1,88 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import './Home.css';
-import { IoLogOut } from 'react-icons/io';
 import { MdExitToApp } from 'react-icons/md';
-
+import { IoHome, IoPerson, IoGift, IoBook } from 'react-icons/io5';
+import CampaignCard from '../OnGoingCampaigns';
+import UserCampaignCard from '../UserCampaigns';
+import CreateCampaignModal from './CreateCampaignModal'; // Import Modal
 
 const Home = ({ setIsAuthenticated }) => {
-  const navigate = useNavigate();
+    const [selectedTab, setSelectedTab] = useState('home'); // State to track selected tab
+    const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
 
-  const handleLogout = () => {
-    // Remove the token from localStorage on logout
-    localStorage.removeItem('oauthToken');
-    setIsAuthenticated(false); // Set authentication state to false
-    navigate('/login'); // Redirect to login page
-  };
+    const handleLogout = () => {
+        localStorage.removeItem('oauthToken');
+        setIsAuthenticated(false);
+        window.location.href = '/'; // Redirect to login page
+    };
 
-  return (
-    <div className="home-container">
-      <h1>Welcome to Your Home Page</h1>
-      <p>This is the page you see after logging in.</p>
-      {/* Logout Button with React Icon */}
-      <button className="logout-button" onClick={handleLogout}>
-      <MdExitToApp className="logout-icon" />
-        Logout
-      </button>
-    </div>
-  );
+    const handleCreateCampaignClick = () => {
+        setModalOpen(true); // Open the modal when the "Create Campaign" button is clicked
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false); // Close the modal
+    };
+
+    const handleCreateCampaignSubmit = (newCampaign) => {
+        console.log('New Campaign Created:', newCampaign);
+        // Here, you would typically send the new campaign data to your backend to create it
+    };
+
+    return (
+        <div className="home-container">
+            <header className="navbar">
+                <div
+                    className={`nav-item ${selectedTab === 'home' ? 'active' : ''}`}
+                    onClick={() => setSelectedTab('home')}
+                >
+                    <IoHome /> Home
+                </div>
+                <div
+                    className={`nav-item ${selectedTab === 'profile' ? 'active' : ''}`}
+                    onClick={() => setSelectedTab('profile')}
+                >
+                    <IoPerson /> Profile
+                </div>
+                <div
+                    className={`nav-item ${selectedTab === 'campaigns' ? 'active' : ''}`}
+                    onClick={() => setSelectedTab('campaigns')}
+                >
+                    <IoGift /> Campaigns
+                </div>
+                <div
+                    className={`nav-item ${selectedTab === 'donations' ? 'active' : ''}`}
+                    onClick={() => setSelectedTab('donations')}
+                >
+                    <IoBook /> Donations
+                </div>
+                
+                {/* Create Campaign Button */}
+                <button className="create-campaign-btn" onClick={handleCreateCampaignClick}>
+                    Create Campaign
+                </button>
+
+                {/* Logout Button */}
+                <button className="logout-button" onClick={handleLogout}>
+                    <MdExitToApp className="logout-icon" />
+                    Logout
+                </button>
+            </header>
+
+            <main className="content">
+                {selectedTab === 'home' && <CampaignCard />}
+                {selectedTab === 'profile' && <div>Your profile details go here.</div>}
+                {selectedTab === 'campaigns' && <UserCampaignCard />}
+                {selectedTab === 'donations' && <div>Your donation history goes here.</div>}
+            </main>
+
+            {isModalOpen &&< CreateCampaignModal 
+                isOpen={isModalOpen} 
+                onClose={handleCloseModal} 
+                onSubmit={handleCreateCampaignSubmit} 
+            />}
+        </div>
+    );
 };
 
 export default Home;
