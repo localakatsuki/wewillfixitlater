@@ -4,15 +4,16 @@
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@okto_web3/react-sdk": "^0.0.0-dev.24",
     "@react-oauth/google": "^0.12.1",
-    "axios": "^1.7.9",
+    "buffer": "^6.0.3",
     "cra-template": "1.2.0",
-    "okto-sdk-react": "^0.1.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^7.1.5",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "user": "^0.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

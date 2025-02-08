@@ -1,16 +1,25 @@
 import React from 'react';
 import './Login.css'
 import { GoogleLogin } from '@react-oauth/google';
-import { useOkto } from 'okto-sdk-react';
 import { useNavigate } from 'react-router-dom';
+import { useOkto } from '@okto_web3/react-sdk';
 
 const Login = ({ setIsAuthenticated }) => {
-  const { authenticate } = useOkto();
+  const oktoClient = useOkto();
   const navigate = useNavigate();
 
   const handleGoogleLogin = async (response) => {
     try {
-      await authenticate(response.credential);
+
+      try {
+        
+        await oktoClient.loginUsingOAuth({
+            idToken: response.credential,
+            provider: "google",
+        });
+      } catch (error) {
+          console.error("Authentication error:", error);
+      }
       console.log('User authenticated successfully!');
       setIsAuthenticated(true);
       navigate('/home'); // Redirect to Home page after successful login
