@@ -24,11 +24,6 @@ const Home = ({ setIsAuthenticated }) => {
         setModalOpen(false); // Close the modal
     };
 
-    const handleCreateCampaignSubmit = (newCampaign) => {
-        console.log('New Campaign Created:', newCampaign);
-        // Here, you would typically send the new campaign data to your backend to create it
-    };
-
     return (
         <div className="home-container">
             <header className="navbar">
@@ -77,9 +72,7 @@ const Home = ({ setIsAuthenticated }) => {
             </main>
 
             {isModalOpen &&< CreateCampaignModal 
-                isOpen={isModalOpen} 
-                onClose={handleCloseModal} 
-                onSubmit={handleCreateCampaignSubmit} 
+                onClose={handleCloseModal}  
             />}
         </div>
     );
