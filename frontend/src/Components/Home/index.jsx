@@ -5,6 +5,8 @@ import { IoHome, IoPerson, IoGift, IoBook } from 'react-icons/io5';
 import CampaignCard from '../OnGoingCampaigns';
 import UserCampaignCard from '../UserCampaigns';
 import CreateCampaignModal from './CreateCampaignModal'; // Import Modal
+import Donation from '../Donations';
+import Profile from '../ProfileData';
 
 const Home = ({ setIsAuthenticated }) => {
     const [selectedTab, setSelectedTab] = useState('home'); // State to track selected tab
@@ -66,9 +68,9 @@ const Home = ({ setIsAuthenticated }) => {
 
             <main className="content">
                 {selectedTab === 'home' && <CampaignCard />}
-                {selectedTab === 'profile' && <div>Your profile details go here.</div>}
+                {selectedTab === 'profile' && <Profile/>}
                 {selectedTab === 'campaigns' && <UserCampaignCard />}
-                {selectedTab === 'donations' && <div>Your donation history goes here.</div>}
+                {selectedTab === 'donations' && <Donation/>}
             </main>
 
             {isModalOpen &&< CreateCampaignModal 

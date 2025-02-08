@@ -7,7 +7,7 @@
 
 .campaign-card {
   background-color: #f0f8ff;  /* Light blue background */
-  border: 2px solid #007BFF;  /* Blue border */
+  border: 2px solid #66b3ff;  /* Blue border */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -22,7 +22,7 @@
 .campaign-card h2 {
   font-size: 1.5em;
   color: #fff;  /* White text for the header */
-  background-color: #007BFF;  /* Blue background for the header */
+  background-color: #66b3ff;  /* Blue background for the header */
   margin: 0;  /* No margin */
   padding: 10px;  /* Padding inside the header */
 }
@@ -67,6 +67,6 @@
 
 .progress-bar {
   height: 100%;
-  background-color: #007BFF; /* Blue color for the progress */
+  background-color: #66b3ff; /* Blue color for the progress */
   border-radius: 5px;
 }

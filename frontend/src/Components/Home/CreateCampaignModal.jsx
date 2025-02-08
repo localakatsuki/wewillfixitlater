@@ -6,6 +6,7 @@ import { useOkto } from '@okto_web3/react-sdk';
 import { evmRawTransaction } from '@okto_web3/react-sdk';
 import { getAccount } from '@okto_web3/react-sdk';
 import { contractAddress } from '../../constant';
+import {notifySuccess} from '../../notify';
 
 const CreateCampaignModal = ({ onClose }) => {
     const oktoClient = useOkto();
@@ -53,14 +54,12 @@ const CreateCampaignModal = ({ onClose }) => {
 
     const { campaignName, goalAmount, duration, campaignDescription, campaignImage } = formData;
 
-    // Convert goalAmount and duration to BigInt (as required)
     const goalAmountBigInt = ethers.toBigInt(goalAmount);
     const durationBigInt = ethers.toBigInt(duration);
 
-    // Assuming `tokenAddress` is a valid Ethereum address (replace with actual if needed)
     
     try {
-      // Generate the call data for the transaction
+
       const wallates = await getAccount(oktoClient);
       const ownerAdress = wallates[0].address; 
 
@@ -88,6 +87,7 @@ const CreateCampaignModal = ({ onClose }) => {
 
       // Close the modal after submission
       onClose();
+      alert('Campaign creation initiated successfully!');
     } catch (error) {
       console.error('Error submitting campaign:', error);
     }

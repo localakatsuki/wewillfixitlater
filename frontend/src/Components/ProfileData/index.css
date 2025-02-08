@@ -1,0 +1,68 @@
+/* General Profile Container Styling */
+.profile-container {
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Wallet List Styling */
+.wallet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Individual Wallet Item Styling */
+.wallet-item {
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wallet-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for Each Line of Wallet Information */
+.wallet-item p {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.wallet-item strong {
+    color: #333;
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 15px;
+    }
+
+    .wallet-item {
+        padding: 15px;
+    }
+
+    .wallet-item p {
+        font-size: 14px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+}

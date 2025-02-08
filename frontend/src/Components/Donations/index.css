@@ -1,0 +1,43 @@
+.donation-list {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: 80%;
+    max-width: 900px;
+}
+
+.donation-list h2 {
+    font-size: 24px;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.donation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.donation-table th,
+.donation-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+}
+
+.donation-table th {
+    background-color: #f3f3f3;
+    color: #444;
+}
+
+.donation-table td a {
+    color: #66b3ff;
+    text-decoration: none;
+}
+
+.donation-table td a:hover {
+    text-decoration: underline;
+}
